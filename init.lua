@@ -208,7 +208,9 @@ local config = {
       ["<leader>wv"] = { "<C-w>v", desc = "Split screen vertically" },
       ["<leader>wm"] = { ":MaximizerToggle<CR>", desc = "Split screen vertically" },
       -- quick save
-      ["<C-s>"] = { ":w!<cr>", desc = "Save File" }, -- change description but the same command
+      ["<C-s>"] = { ":w!<cr>", desc = "Save File" },
+      ["<M-s>"] = { ":w!<cr>", desc = "Save File" },
+      ["<leader>ww"] = { ":w!<cr>", desc = "Save File" },
     },
     t = {
       -- setting a mapping to false will disable it
