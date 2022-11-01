@@ -5,7 +5,9 @@
 vim.g["caser_prefix"] = "gk"
 
 vim.cmd [[
+
     nmap gp <cmd>Pounce<CR>
+
     vmap gp <cmd>Pounce<CR>
     omap gp <cmd>Pounce<CR>
     :map <expr> ; repmo#LastKey(';')|sunmap ;
