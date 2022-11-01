@@ -1,4 +1,20 @@
 --              AstroNvim Configuration Table All configuration changes should go inside of the table below
+--
+
+-- Variables
+vim.g["caser_prefix"] = "gk"
+vim.cmd [[
+    nmap gp <cmd>Pounce<CR>
+    vmap gp <cmd>Pounce<CR>
+    omap gp <cmd>Pounce<CR>
+    :map <expr> ; repmo#LastKey(';')|sunmap ;
+    :map <expr> , repmo#LastRevKey(',')|sunmap ,
+    :noremap <expr> f repmo#ZapKey('f')|sunmap f
+    :noremap <expr> F repmo#ZapKey('F')|sunmap F
+    :noremap <expr> t repmo#ZapKey('t')|sunmap t
+    :noremap <expr> T repmo#ZapKey('T')|sunmap T
+
+  ]]
 
 -- You can think of a Lua "table" as a dictionary like data structure the
 -- normal format is "key = value". These also handle array like data structures
@@ -171,6 +187,8 @@ local config = {
     -- server_registration = function(server, opts)
     --   require("lspconfig")[server].setup(opts)
     -- end,
+    --
+    -- fooBar
 
     -- Add overrides for LSP server settings, the keys are the name of the server
     ["server-settings"] = {
@@ -227,8 +245,14 @@ local config = {
       -- You can also add new plugins here as well:
       -- Add plugins, the packer syntax without the "use"
       { "szw/vim-maximizer" },
+      { "arthurxavierx/vim-caser" },
+      { "tpope/vim-repeat" },
       { "tpope/vim-surround" },
       { "vim-scripts/ReplaceWithRegister" },
+      { "ggandor/leap.nvim", config = function() require("leap").set_default_keymaps() end },
+      { "rlane/pounce.nvim", cmd = { "Pounce" }, opt = true },
+      { "nvim-treesitter/nvim-treesitter-textobjects" },
+      { "mg979/vim-visual-multi" },
       {
         "ahmedkhalf/project.nvim",
         config = function()
@@ -241,13 +265,11 @@ local config = {
         end,
       },
       -- { "andweeb/presence.nvim" },
-      -- {
-      --   "ray-x/lsp_signature.nvim",
-      --   event = "BufRead",
-      --   config = function()
-      --     require("lsp_signature").setup()
-      --   end,
-      -- },
+      {
+        "ray-x/lsp_signature.nvim",
+        event = "BufRead",
+        config = function() require("lsp_signature").setup() end,
+      },
 
       -- We also support a key value style plugin definition similar to NvChad:
       -- ["ray-x/lsp_signature.nvim"] = {
@@ -273,7 +295,94 @@ local config = {
       return config -- return final config table
     end,
     treesitter = { -- overrides `require("treesitter").setup(...)`
-      -- ensure_installed = { "lua" },
+      ensure_installed = { "lua", "javascript", "typescript", "html", "css" },
+      textobjects = {
+        lsp_interop = {
+          enable = true,
+          border = "none",
+          peek_definition_code = {
+            ["<leader>df"] = "@function.outer",
+            ["<leader>dF"] = "@class.outer",
+          },
+        },
+        swap = {
+          enable = true,
+          swap_next = {
+            ["<leader>a"] = "@parameter.inner",
+          },
+          swap_previous = {
+            ["<leader>A"] = "@parameter.inner",
+          },
+        },
+        move = {
+          enable = true,
+          set_jumps = true, -- whether to set jumps in the jumplist
+          goto_next_start = {
+            ["]k"] = "@function.outer",
+            ["]f"] = "@function.outer",
+            ["]c"] = { query = "@class.outer", desc = "Next class start" },
+          },
+          goto_next_end = {
+            ["]K"] = "@conditonal.outer",
+            ["]F"] = "@function.outer",
+            ["]C"] = "@class.outer",
+          },
+          goto_previous_start = {
+            ["[k"] = "@conditional.outer",
+            ["[f"] = "@function.outer",
+            ["[c"] = "@class.outer",
+          },
+          goto_previous_end = {
+            ["[K"] = "@conditional.outer",
+            ["[F"] = "@function.outer",
+            ["[C"] = "@class.outer",
+          },
+        },
+        select = {
+          enable = true,
+
+          -- Automatically jump forward to textobj, similar to targets.vim
+          lookahead = true,
+
+          keymaps = {
+            -- You can use the capture groups defined in textobjects.scm
+            ["im"] = "@call.inner",
+            ["am"] = "@call.outer",
+            ["ip"] = "@parameter.inner",
+            ["ap"] = "@parameter.outer",
+            ["ik"] = "@conditional.inner",
+            ["ak"] = "@conditional.outer",
+            ["af"] = "@function.outer",
+            ["if"] = "@function.inner",
+            ["ac"] = "@class.outer",
+            -- You can optionally set descriptions to the mappings (used in the desc parameter of
+            -- nvim_buf_set_keymap) which plugins like which-key display
+            ["ic"] = { query = "@class.inner", desc = "Select inner part of a class region" },
+          },
+          -- You can choose the select mode (default is charwise 'v')
+          --
+          -- Can also be a function which gets passed a table with the keys
+          -- * query_string: eg '@function.inner'
+          -- * method: eg 'v' or 'o'
+          -- and should return the mode ('v', 'V', or '<c-v>') or a table
+          -- mapping query_strings to modes.
+          selection_modes = {
+            ["@parameter.outer"] = "v", -- charwise
+            ["@function.outer"] = "V", -- linewise
+            ["@class.outer"] = "<c-v>", -- blockwise
+          },
+          -- If you set this to `true` (default is `false`) then any textobject is
+          -- extended to include preceding or succeeding whitespace. Succeeding
+          -- whitespace has priority in order to act similarly to eg the built-in
+          -- `ap`.
+          --
+          -- Can also be a function which gets passed a table with the keys
+          -- * query_string: eg '@function.inner'
+          -- * selection_mode: eg 'v'
+          -- and should return true of false
+          include_surrounding_whitespace = true,
+        },
+      },
     },
     -- use mason-lspconfig to configure LSP installations
     ["mason-lspconfig"] = { -- overrides `require("mason-lspconfig").setup(...)`
@@ -297,7 +406,7 @@ local config = {
     vscode_snippet_paths = {},
     -- Extend filetypes
     filetype_extend = {
-      -- javascript = { "javascriptreact" },
+      javascript = { "javascriptreact" },
     },
   },
 
@@ -350,5 +459,18 @@ local config = {
     -- }
   end,
 }
+
+vim.cmd [[
+    nmap gp <cmd>Pounce<CR>
+    vmap gp <cmd>Pounce<CR>
+    omap gp <cmd>Pounce<CR>
+    :map <expr> ; repmo#LastKey(';')|sunmap ;
+    :map <expr> , repmo#LastRevKey(',')|sunmap ,
+    :noremap <expr> f repmo#ZapKey('f')|sunmap f
+    :noremap <expr> F repmo#ZapKey('F')|sunmap F
+    :noremap <expr> t repmo#ZapKey('t')|sunmap t
+    :noremap <expr> T repmo#ZapKey('T')|sunmap T
+
+  ]]
 
 return config
