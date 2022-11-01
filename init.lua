@@ -3,6 +3,7 @@
 
 -- Variables
 vim.g["caser_prefix"] = "gk"
+
 vim.cmd [[
     nmap gp <cmd>Pounce<CR>
     vmap gp <cmd>Pounce<CR>
@@ -459,18 +460,5 @@ local config = {
     -- }
   end,
 }
-
-vim.cmd [[
-    nmap gp <cmd>Pounce<CR>
-    vmap gp <cmd>Pounce<CR>
-    omap gp <cmd>Pounce<CR>
-    :map <expr> ; repmo#LastKey(';')|sunmap ;
-    :map <expr> , repmo#LastRevKey(',')|sunmap ,
-    :noremap <expr> f repmo#ZapKey('f')|sunmap f
-    :noremap <expr> F repmo#ZapKey('F')|sunmap F
-    :noremap <expr> t repmo#ZapKey('t')|sunmap t
-    :noremap <expr> T repmo#ZapKey('T')|sunmap T
-
-  ]]
 
 return config
