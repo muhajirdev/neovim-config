@@ -26,6 +26,7 @@ vim.cmd [[
 local config = {
 
   -- Configure AstroNvim updates
+  --
   updater = {
 
     remote = "origin", -- remote to use
